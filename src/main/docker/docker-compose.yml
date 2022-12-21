@@ -1,0 +1,11 @@
+version: '3.3'
+
+services:
+  db:
+    image: mysql:latest
+    container_name: mysql-container
+    environment:
+      - MYSQL_ROOT_PASSWORD=tanio
+    ports:
+      - "3306:3306"
+    command: --default-authentication-plugin=mysql_native_password
