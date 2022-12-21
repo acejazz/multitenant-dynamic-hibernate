@@ -1,7 +1,7 @@
 # Read Me First
 The following was discovered as part of building this project:
 
-* The original package name 'com.tanio.multitenant-dynamic-hibernate' is invalid and this project uses 'com.tanio.multitenantdynamichibernate' instead.
+* The original package name 'com.tanio.multitenant-dynamic-hibernate' is invalid and this project uses 'com.tanio.multitenant' instead.
 
 # Getting Started
 

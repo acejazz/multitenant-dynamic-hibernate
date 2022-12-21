@@ -1,4 +1,4 @@
-package com.tanio.multitenantdynamichibernate;
+package com.tanio.multitenant;
 
 import org.springframework.data.repository.CrudRepository;
 
