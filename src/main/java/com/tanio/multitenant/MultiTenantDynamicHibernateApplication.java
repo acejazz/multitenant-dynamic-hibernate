@@ -1,9 +1,9 @@
 package com.tanio.multitenant;
 
-import com.tanio.multitenant.first.Person;
-import com.tanio.multitenant.first.PersonRepository;
-import com.tanio.multitenant.second.Car;
-import com.tanio.multitenant.second.CarRepository;
+import com.tanio.multitenant.customers.Customer;
+import com.tanio.multitenant.customers.CustomerRepository;
+import com.tanio.multitenant.inventory.Car;
+import com.tanio.multitenant.inventory.CarRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +21,7 @@ public class MultiTenantDynamicHibernateApplication {
 	private static final Logger log = LoggerFactory.getLogger(MultiTenantDynamicHibernateApplication.class);
 
 	@Autowired
-	PersonRepository personRepository;
+	CustomerRepository customerRepository;
 
 	@Autowired
 	CarRepository carRepository;
@@ -30,10 +30,10 @@ public class MultiTenantDynamicHibernateApplication {
 		SpringApplication.run(MultiTenantDynamicHibernateApplication.class, args);
 	}
 
-	@GetMapping("/save-person")
-	Person savePerson() {
+	@GetMapping("/save-customer")
+	Customer saveCustomer() {
 		log.info("Current tenant: [{}]", TenantContext.getCurrentTenant());
-		return personRepository.save(new Person(UUID.randomUUID().toString(), "Tanio", "Messina"));
+		return customerRepository.save(new Customer(UUID.randomUUID().toString(), "Tanio", "Messina"));
 	}
 
 	@GetMapping("/save-car")

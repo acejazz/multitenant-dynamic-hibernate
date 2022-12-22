@@ -12,26 +12,26 @@ import java.util.Map;
 public class MultiTenantConfiguration {
     @Bean
     public DataSource dataSource() {
-        DataSource mySql1 = DataSourceBuilder.create()
+        DataSource customerDatasource = DataSourceBuilder.create()
                 .driverClassName("com.mysql.cj.jdbc.Driver")
-                .url("jdbc:mysql://localhost:3306/my_db?createDatabaseIfNotExist=true")
+                .url("jdbc:mysql://localhost:3306/customers")
                 .username("root")
                 .password("tanio")
                 .build();
 
-        DataSource mySql2 = DataSourceBuilder.create()
+        DataSource inventoryDatasource = DataSourceBuilder.create()
                 .driverClassName("com.mysql.cj.jdbc.Driver")
-                .url("jdbc:mysql://localhost:3307/my_db?createDatabaseIfNotExist=true")
+                .url("jdbc:mysql://localhost:3307/inventory")
                 .username("root")
                 .password("tanio")
                 .build();
 
         Map<Object, Object> datasources = new HashMap<>();
-        datasources.put("1", mySql1);
-        datasources.put("2", mySql2);
+        datasources.put("1", customerDatasource);
+        datasources.put("2", inventoryDatasource);
 
         MultiTenantDataSource multitenantDataSource = new MultiTenantDataSource();
-        multitenantDataSource.setDefaultTargetDataSource(mySql1);
+        multitenantDataSource.setDefaultTargetDataSource(customerDatasource);
         multitenantDataSource.setTargetDataSources(datasources);
         multitenantDataSource.afterPropertiesSet();
         return multitenantDataSource;

@@ -3,7 +3,7 @@
 `docker-compose -f src/main/docker/docker-compose.yml up -d db`
 
 ```
-CREATE TABLE `person` (
+CREATE TABLE `customer` (
   `id` varchar(255) NOT NULL,
   `first_name` varchar(255) DEFAULT NULL,
   `last_name` varchar(255) DEFAULT NULL,

@@ -1,4 +1,4 @@
-package com.tanio.multitenant.second;
+package com.tanio.multitenant.inventory;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

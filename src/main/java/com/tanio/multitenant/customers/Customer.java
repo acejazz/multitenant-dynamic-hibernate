@@ -1,19 +1,19 @@
-package com.tanio.multitenant.first;
+package com.tanio.multitenant.customers;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
 @Entity
-public class Person {
+public class Customer {
     @Id
     private String id;
     private String firstName;
     private String lastName;
 
-    public Person() {
+    public Customer() {
     }
 
-    public Person(String id, String firstName, String lastName) {
+    public Customer(String id, String firstName, String lastName) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
