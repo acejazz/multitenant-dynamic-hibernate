@@ -18,13 +18,13 @@ import java.util.UUID;
 @RestController
 public class MultiTenantDynamicHibernateApplication {
 
-	private static final Logger log = LoggerFactory.getLogger(MultiTenantDynamicHibernateApplication.class);
-
 	@Autowired
 	CustomerRepository customerRepository;
 
 	@Autowired
 	CarRepository carRepository;
+
+	int counter = 0;
 
 	public static void main(String[] args) {
 		SpringApplication.run(MultiTenantDynamicHibernateApplication.class, args);
@@ -32,14 +32,12 @@ public class MultiTenantDynamicHibernateApplication {
 
 	@GetMapping("/save-customer")
 	Customer saveCustomer() {
-		log.info("Current tenant: [{}]", TenantContext.getCurrentTenant());
-		return customerRepository.save(new Customer(UUID.randomUUID().toString(), "Tanio", "Messina"));
+		return customerRepository.save(new Customer(UUID.randomUUID().toString(), "Tanio", "Messina"+counter++));
 	}
 
 	@GetMapping("/save-car")
 	Car saveCar() {
-		log.info("Current tenant: [{}]", TenantContext.getCurrentTenant());
-		return carRepository.save(new Car(UUID.randomUUID().toString(), "Opel"));
+		return carRepository.save(new Car(UUID.randomUUID().toString(), "Opel"+counter++));
 	}
 
 }

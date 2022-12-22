@@ -2,8 +2,10 @@ package com.tanio.multitenant.inventory;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
+@Table(name = "car")
 public class Car {
     @Id
     private String id;
