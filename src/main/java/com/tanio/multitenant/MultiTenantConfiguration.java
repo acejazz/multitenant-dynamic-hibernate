@@ -10,9 +10,13 @@ import java.util.Map;
 
 @Configuration
 public class MultiTenantConfiguration {
+
+    public static final String CUSTOMERS_DATASOURCE = "customers";
+    public static final String INVENTORY_DATASOURCE = "inventory";
+
     @Bean
     public DataSource dataSource() {
-        DataSource customerDatasource = DataSourceBuilder.create()
+        DataSource customersDatasource = DataSourceBuilder.create()
                 .driverClassName("com.mysql.cj.jdbc.Driver")
                 .url("jdbc:mysql://localhost:3306/customers")
                 .username("root")
@@ -27,11 +31,11 @@ public class MultiTenantConfiguration {
                 .build();
 
         Map<Object, Object> datasources = new HashMap<>();
-        datasources.put("1", customerDatasource);
-        datasources.put("2", inventoryDatasource);
+        datasources.put(CUSTOMERS_DATASOURCE, customersDatasource);
+        datasources.put(INVENTORY_DATASOURCE, inventoryDatasource);
 
         MultiTenantDataSource multitenantDataSource = new MultiTenantDataSource();
-        multitenantDataSource.setDefaultTargetDataSource(customerDatasource);
+        multitenantDataSource.setDefaultTargetDataSource(customersDatasource);
         multitenantDataSource.setTargetDataSources(datasources);
         multitenantDataSource.afterPropertiesSet();
         return multitenantDataSource;
