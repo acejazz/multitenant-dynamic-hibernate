@@ -1,4 +1,4 @@
-package com.tanio.multitenant;
+package com.tanio.multitenant.first;
 
 import org.springframework.data.repository.CrudRepository;
 
