@@ -11,7 +11,7 @@ import java.util.Map;
 @Configuration
 public class DataSourcesConfiguration {
     @Bean(name = "customersDataSource")
-    DataSource customersDataSource() {
+    DataSource customersDataSource(CurrentTenantKey currentTenantKey) {
         DataSource targetDataSource = DataSourceBuilder.create()
                 .driverClassName("com.mysql.cj.jdbc.Driver")
                 .url("jdbc:mysql://localhost:3306/customers")
@@ -22,14 +22,14 @@ public class DataSourcesConfiguration {
         Map<Object, Object> targetDataSources = new HashMap<>();
         targetDataSources.put("1", targetDataSource);
 
-        MultiTenantDatasource multiTenantDatasource = new MultiTenantDatasource();
+        MultiTenantDatasource multiTenantDatasource = new MultiTenantDatasource(currentTenantKey);
         multiTenantDatasource.setTargetDataSources(targetDataSources);
 
         return multiTenantDatasource;
     }
 
     @Bean(name = "inventoryDatasource")
-    DataSource inventoryDataSource() {
+    DataSource inventoryDataSource(CurrentTenantKey currentTenantKey) {
         DataSource targetDataSource = DataSourceBuilder.create()
                 .driverClassName("com.mysql.cj.jdbc.Driver")
                 .url("jdbc:mysql://localhost:3307/inventory")
@@ -40,7 +40,7 @@ public class DataSourcesConfiguration {
         Map<Object, Object> targetDataSources = new HashMap<>();
         targetDataSources.put("1", targetDataSource);
 
-        MultiTenantDatasource multiTenantDatasource = new MultiTenantDatasource();
+        MultiTenantDatasource multiTenantDatasource = new MultiTenantDatasource(currentTenantKey);
         multiTenantDatasource.setTargetDataSources(targetDataSources);
 
         return multiTenantDatasource;

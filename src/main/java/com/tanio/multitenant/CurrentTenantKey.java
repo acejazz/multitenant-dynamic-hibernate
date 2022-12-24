@@ -1,5 +1,8 @@
 package com.tanio.multitenant;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class CurrentTenantKey {
     private final ThreadLocal<String> value = new ThreadLocal<>();
 
@@ -8,7 +11,7 @@ public class CurrentTenantKey {
     }
 
     public String get() {
-        return value.get();
+        return "1";
     }
 
     public void reset() {
