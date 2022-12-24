@@ -1,6 +1,6 @@
 package com.tanio.multitenant.inventory;
 
-import org.springframework.boot.jdbc.DataSourceBuilder;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -11,7 +11,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
-import java.util.HashMap;
 
 @Configuration
 @EnableTransactionManagement
@@ -20,29 +19,24 @@ import java.util.HashMap;
         transactionManagerRef = "inventoryPlatformTransactionManager")
 class InventoryDatasourceConfiguration {
 
-    @Bean(name = "inventoryDatasource")
-    DataSource inventoryDataSource() {
-        return DataSourceBuilder.create()
-                .driverClassName("com.mysql.cj.jdbc.Driver")
-                .url("jdbc:mysql://localhost:3307/inventory")
-                .username("root")
-                .password("tanio")
-                .build();
-    }
-
     @Bean(name = "inventoryLocalContainerEntityManagerFactoryBean")
-    LocalContainerEntityManagerFactoryBean inventoryLocalContainerEntityManagerFactoryBean() {
+    LocalContainerEntityManagerFactoryBean inventoryLocalContainerEntityManagerFactoryBean(
+            @Qualifier("inventoryDatasource") DataSource dataSource) {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
-        em.setDataSource(inventoryDataSource());
+        em.setDataSource(dataSource);
         em.setPackagesToScan("com.tanio.multitenant.inventory");
         em.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
+
         return em;
     }
 
     @Bean(name = "inventoryPlatformTransactionManager")
-    PlatformTransactionManager inventoryPlatformTransactionManager() {
-        JpaTransactionManager jpaTransactionManager = new JpaTransactionManager();
-        jpaTransactionManager.setEntityManagerFactory(inventoryLocalContainerEntityManagerFactoryBean().getObject());
-        return jpaTransactionManager;
+    PlatformTransactionManager inventoryPlatformTransactionManager(
+            @Qualifier("inventoryDatasource") DataSource dataSource) {
+        JpaTransactionManager tm = new JpaTransactionManager();
+        tm.setEntityManagerFactory(
+                        inventoryLocalContainerEntityManagerFactoryBean(dataSource)
+                                .getObject());
+        return tm;
     }
 }
