@@ -11,7 +11,7 @@ public class CurrentTenantKey {
     }
 
     public String get() {
-        return "1";
+        return value.get();
     }
 
     public void reset() {

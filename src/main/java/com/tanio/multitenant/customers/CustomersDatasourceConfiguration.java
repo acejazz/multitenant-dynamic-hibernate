@@ -12,6 +12,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
 
+import static java.util.Collections.singletonMap;
+
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(
@@ -24,6 +26,7 @@ class CustomersDatasourceConfiguration {
             @Qualifier("customersDataSource") DataSource dataSource) {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(dataSource);
+        em.setJpaPropertyMap(singletonMap("hibernate.dialect", "org.hibernate.dialect.MySQL5Dialect"));
         em.setPackagesToScan("com.tanio.multitenant.customers");
         em.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
 
