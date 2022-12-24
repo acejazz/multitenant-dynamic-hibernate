@@ -1,20 +1,38 @@
 version: '3.3'
 
 services:
-  db-1:
+  customer-db-1:
     image: mysql:latest
-    container_name: mysql-container-1
+    container_name: customer-db-1
     environment:
       - MYSQL_ROOT_PASSWORD=tanio
     ports:
       - "3306:3306"
     command: --default-authentication-plugin=mysql_native_password
 
-  db-2:
+  customer-db-2:
     image: mysql:latest
-    container_name: mysql-container-2
+    container_name: customer-db-2
+    environment:
+      - MYSQL_ROOT_PASSWORD=tanio
+    ports:
+      - "3308:3306"
+    command: --default-authentication-plugin=mysql_native_password
+
+  inventory-db-1:
+    image: mysql:latest
+    container_name: inventory-db-1
     environment:
       - MYSQL_ROOT_PASSWORD=tanio
     ports:
       - "3307:3306"
+    command: --default-authentication-plugin=mysql_native_password
+
+  inventory-db-2:
+    image: mysql:latest
+    container_name: inventory-db-2
+    environment:
+      - MYSQL_ROOT_PASSWORD=tanio
+    ports:
+      - "3309:3306"
     command: --default-authentication-plugin=mysql_native_password

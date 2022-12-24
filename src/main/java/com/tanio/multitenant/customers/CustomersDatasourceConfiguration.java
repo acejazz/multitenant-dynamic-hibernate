@@ -1,6 +1,6 @@
 package com.tanio.multitenant.customers;
 
-import org.springframework.boot.jdbc.DataSourceBuilder;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -11,39 +11,36 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
-import java.util.HashMap;
+
+import static com.tanio.multitenant.customers.CustomersDatasourceConfiguration.ENTITY_MANAGER_FACTORY;
+import static com.tanio.multitenant.customers.CustomersDatasourceConfiguration.TRANSACTION_MANAGER;
+import static java.util.Collections.singletonMap;
+import static java.util.Objects.requireNonNull;
 
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(
-        entityManagerFactoryRef = "customersLocalContainerEntityManagerFactoryBean",
-        transactionManagerRef = "customersPlatformTransactionManager")
+        entityManagerFactoryRef = ENTITY_MANAGER_FACTORY,
+        transactionManagerRef = TRANSACTION_MANAGER)
 class CustomersDatasourceConfiguration {
+    static final String ENTITY_MANAGER_FACTORY = "customersLocalContainerEntityManagerFactoryBean";
+    static final String TRANSACTION_MANAGER = "customersPlatformTransactionManager";
 
-    @Bean(name = "customersDataSource")
-    DataSource customersDataSource() {
-        return DataSourceBuilder.create()
-                .driverClassName("com.mysql.cj.jdbc.Driver")
-                .url("jdbc:mysql://localhost:3306/customers")
-                .username("root")
-                .password("tanio")
-                .build();
-    }
-
-    @Bean(name = "customersLocalContainerEntityManagerFactoryBean")
-    LocalContainerEntityManagerFactoryBean customersLocalContainerEntityManagerFactoryBean() {
+    @Bean(name = ENTITY_MANAGER_FACTORY)
+    LocalContainerEntityManagerFactoryBean entityManagerFactory(
+            @Qualifier("customersDataSource") DataSource dataSource) {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
-        em.setDataSource(customersDataSource());
+        em.setDataSource(dataSource);
+        em.setJpaPropertyMap(singletonMap("hibernate.dialect", "org.hibernate.dialect.MySQL5Dialect"));
         em.setPackagesToScan("com.tanio.multitenant.customers");
         em.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
 
         return em;
     }
 
-    @Bean(name = "customersPlatformTransactionManager")
-    PlatformTransactionManager customersPlatformTransactionManager() {
-        JpaTransactionManager jpaTransactionManager = new JpaTransactionManager();
-        jpaTransactionManager.setEntityManagerFactory(customersLocalContainerEntityManagerFactoryBean().getObject());
-        return jpaTransactionManager;
+    @Bean(name = TRANSACTION_MANAGER)
+    PlatformTransactionManager transactionManager(
+            @Qualifier(ENTITY_MANAGER_FACTORY) LocalContainerEntityManagerFactoryBean entityManagerFactory) {
+        return new JpaTransactionManager(requireNonNull(entityManagerFactory.getObject()));
     }
 }

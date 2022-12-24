@@ -1,6 +1,6 @@
 package com.tanio.multitenant.inventory;
 
-import org.springframework.boot.jdbc.DataSourceBuilder;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -11,38 +11,36 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
-import java.util.HashMap;
+
+import static com.tanio.multitenant.inventory.InventoryDatasourceConfiguration.ENTITY_MANAGER_FACTORY;
+import static com.tanio.multitenant.inventory.InventoryDatasourceConfiguration.TRANSACTION_MANAGER;
+import static java.util.Collections.singletonMap;
+import static java.util.Objects.requireNonNull;
 
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(
-        entityManagerFactoryRef = "inventoryLocalContainerEntityManagerFactoryBean",
-        transactionManagerRef = "inventoryPlatformTransactionManager")
+        entityManagerFactoryRef = ENTITY_MANAGER_FACTORY,
+        transactionManagerRef = TRANSACTION_MANAGER)
 class InventoryDatasourceConfiguration {
+    final static String ENTITY_MANAGER_FACTORY = "inventoryLocalContainerEntityManagerFactoryBean";
+    final static String TRANSACTION_MANAGER = "inventoryPlatformTransactionManager";
 
-    @Bean(name = "inventoryDatasource")
-    DataSource inventoryDataSource() {
-        return DataSourceBuilder.create()
-                .driverClassName("com.mysql.cj.jdbc.Driver")
-                .url("jdbc:mysql://localhost:3307/inventory")
-                .username("root")
-                .password("tanio")
-                .build();
-    }
-
-    @Bean(name = "inventoryLocalContainerEntityManagerFactoryBean")
-    LocalContainerEntityManagerFactoryBean inventoryLocalContainerEntityManagerFactoryBean() {
+    @Bean(name = ENTITY_MANAGER_FACTORY)
+    LocalContainerEntityManagerFactoryBean entityManagerFactory(
+            @Qualifier("inventoryDatasource") DataSource dataSource) {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
-        em.setDataSource(inventoryDataSource());
+        em.setDataSource(dataSource);
+        em.setJpaPropertyMap(singletonMap("hibernate.dialect", "org.hibernate.dialect.MySQL5Dialect"));
         em.setPackagesToScan("com.tanio.multitenant.inventory");
         em.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
+
         return em;
     }
 
-    @Bean(name = "inventoryPlatformTransactionManager")
-    PlatformTransactionManager inventoryPlatformTransactionManager() {
-        JpaTransactionManager jpaTransactionManager = new JpaTransactionManager();
-        jpaTransactionManager.setEntityManagerFactory(inventoryLocalContainerEntityManagerFactoryBean().getObject());
-        return jpaTransactionManager;
+    @Bean(name = TRANSACTION_MANAGER)
+    PlatformTransactionManager transactionManager(
+            @Qualifier(ENTITY_MANAGER_FACTORY) LocalContainerEntityManagerFactoryBean entityManagerFactory) {
+        return new JpaTransactionManager(requireNonNull(entityManagerFactory.getObject()));
     }
 }

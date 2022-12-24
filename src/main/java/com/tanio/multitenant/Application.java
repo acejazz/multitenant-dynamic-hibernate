@@ -4,8 +4,6 @@ import com.tanio.multitenant.customers.Customer;
 import com.tanio.multitenant.customers.CustomerRepository;
 import com.tanio.multitenant.inventory.Car;
 import com.tanio.multitenant.inventory.CarRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -16,7 +14,7 @@ import java.util.UUID;
 
 @SpringBootApplication
 @RestController
-public class MultiTenantDynamicHibernateApplication {
+public class Application {
 
 	@Autowired
 	CustomerRepository customerRepository;
@@ -27,7 +25,7 @@ public class MultiTenantDynamicHibernateApplication {
 	int counter = 0;
 
 	public static void main(String[] args) {
-		SpringApplication.run(MultiTenantDynamicHibernateApplication.class, args);
+		SpringApplication.run(Application.class, args);
 	}
 
 	@GetMapping("/save-customer")
