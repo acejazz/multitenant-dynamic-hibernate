@@ -5,7 +5,6 @@ import com.tanio.multitenant.customers.CustomerRepository;
 import com.tanio.multitenant.inventory.Car;
 import com.tanio.multitenant.inventory.CarRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.sql.DataSource;
-import java.util.Map;
 import java.util.UUID;
 
 @SpringBootApplication
@@ -28,12 +26,10 @@ public class Application implements CommandLineRunner {
     CarRepository carRepository;
 
     @Autowired
-    @Qualifier("customersDataSourcesMap")
-    Map<String, DataSource> customersDataSourcesMap;
+    CustomerDataSourcesProvider customersDataSourcesProvider;
 
 	@Autowired
-	@Qualifier("inventoryDataSourcesMap")
-	Map<String, DataSource> inventoryDataSourcesMap;
+	InventoryDataSourcesProvider inventoryDataSourcesProvider;
 
     int counter = 0;
 
@@ -60,19 +56,19 @@ public class Application implements CommandLineRunner {
 				.password("tanio")
 				.build();
 
-		DataSource secondCustomerDataSource = DataSourceBuilder.create()
+		DataSource firstInventoryDataSource = DataSourceBuilder.create()
 				.driverClassName("com.mysql.cj.jdbc.Driver")
-				.url("jdbc:mysql://localhost:3308/customers")
+				.url("jdbc:mysql://localhost:3307/inventory")
 				.username("root")
 				.password("tanio")
 				.build();
 
-		customersDataSourcesMap.put("1", firstCustomerDataSource);
-		customersDataSourcesMap.put("2", secondCustomerDataSource);
+		customersDataSourcesProvider.addDataSource(firstCustomerDataSource, "1");
+		inventoryDataSourcesProvider.addDataSource(firstInventoryDataSource, "1");
 
-		DataSource firstInventoryDataSource = DataSourceBuilder.create()
+		DataSource secondCustomerDataSource = DataSourceBuilder.create()
 				.driverClassName("com.mysql.cj.jdbc.Driver")
-				.url("jdbc:mysql://localhost:3307/inventory")
+				.url("jdbc:mysql://localhost:3308/customers")
 				.username("root")
 				.password("tanio")
 				.build();
@@ -84,7 +80,7 @@ public class Application implements CommandLineRunner {
 				.password("tanio")
 				.build();
 
-		inventoryDataSourcesMap.put("1", firstInventoryDataSource);
-		inventoryDataSourcesMap.put("2", secondInventoryDataSource);
+		customersDataSourcesProvider.addDataSource(secondCustomerDataSource, "2");
+		inventoryDataSourcesProvider.addDataSource(secondInventoryDataSource, "2");
     }
 }

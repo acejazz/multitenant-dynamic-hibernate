@@ -3,15 +3,14 @@ package com.tanio.multitenant;
 import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
 
 import javax.sql.DataSource;
-import java.util.Map;
 
-public class MultiTenantDatasource extends AbstractRoutingDataSource {
+public class DynamicDatasource extends AbstractRoutingDataSource {
     private final CurrentTenantKey currentTenantKey;
-    private final Map<String, DataSource> dataSources;
+    private final DataSourceProvider dataSourceProvider;
 
-    public MultiTenantDatasource(CurrentTenantKey currentTenantKey, Map<String, DataSource> dataSources) {
+    public DynamicDatasource(CurrentTenantKey currentTenantKey, DataSourceProvider dataSourceProvider) {
         this.currentTenantKey = currentTenantKey;
-        this.dataSources = dataSources;
+        this.dataSourceProvider = dataSourceProvider;
     }
 
     @Override
@@ -21,7 +20,7 @@ public class MultiTenantDatasource extends AbstractRoutingDataSource {
 
     @Override
     protected DataSource determineTargetDataSource() {
-        return dataSources.get(currentTenantKey.get());
+        return dataSourceProvider.getForTenantKey(currentTenantKey.get());
     }
 
     @Override
