@@ -1,5 +1,6 @@
 package com.tanio.multitenant.inventory;
 
+import com.tanio.multitenant.CurrentCombinedDatasource;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,10 +26,16 @@ import static java.util.Objects.requireNonNull;
 class InventoryDatasourceConfiguration {
     final static String ENTITY_MANAGER_FACTORY = "inventoryLocalContainerEntityManagerFactoryBean";
     final static String TRANSACTION_MANAGER = "inventoryPlatformTransactionManager";
+    final static String INVENTORY_DATASOURCE = "inventoryDatasource";
+
+    @Bean(name = INVENTORY_DATASOURCE)
+    DataSource inventoryDataSource(CurrentCombinedDatasource currentDataSources) {
+        return new InventoryDynamicDatasource(currentDataSources.get());
+    }
 
     @Bean(name = ENTITY_MANAGER_FACTORY)
     LocalContainerEntityManagerFactoryBean entityManagerFactory(
-            @Qualifier("inventoryDatasource") DataSource dataSource) {
+            @Qualifier(INVENTORY_DATASOURCE) DataSource dataSource) {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(dataSource);
         em.setJpaPropertyMap(singletonMap("hibernate.dialect", "org.hibernate.dialect.MySQL5Dialect"));

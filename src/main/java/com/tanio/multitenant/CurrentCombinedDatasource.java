@@ -10,7 +10,7 @@ public class CurrentCombinedDatasource {
         this.datasource.set(datasource);
     }
 
-    ThreadLocal<CombinedDataSource> get() {
+    public ThreadLocal<CombinedDataSource> get() {
         return datasource;
     }
 

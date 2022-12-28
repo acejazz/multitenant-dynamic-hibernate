@@ -1,5 +1,6 @@
-package com.tanio.multitenant;
+package com.tanio.multitenant.customers;
 
+import com.tanio.multitenant.CombinedDataSource;
 import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
 
 import javax.sql.DataSource;
@@ -12,13 +13,13 @@ public class CustomersDynamicDatasource extends AbstractRoutingDataSource {
     }
 
     @Override
-    protected Object determineCurrentLookupKey() {
+    public Object determineCurrentLookupKey() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    protected DataSource determineTargetDataSource() {
-        return dataSource.get().customersDatasource;
+    public DataSource determineTargetDataSource() {
+        return dataSource.get().customersDatasource();
     }
 
     @Override

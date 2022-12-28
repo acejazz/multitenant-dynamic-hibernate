@@ -1,5 +1,6 @@
-package com.tanio.multitenant;
+package com.tanio.multitenant.inventory;
 
+import com.tanio.multitenant.CombinedDataSource;
 import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
 
 import javax.sql.DataSource;
@@ -18,7 +19,7 @@ public class InventoryDynamicDatasource extends AbstractRoutingDataSource {
 
     @Override
     protected DataSource determineTargetDataSource() {
-        return dataSource.get().inventoryDatasource;
+        return dataSource.get().inventoryDatasource();
     }
 
     @Override
