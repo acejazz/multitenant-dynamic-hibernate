@@ -27,7 +27,7 @@ class InventoryDatasourceConfiguration {
 
     @Bean
     InventoryDynamicDatasource inventoryDataSource(CurrentCombinedDatasource currentDataSources) {
-        return new InventoryDynamicDatasource(currentDataSources.get());
+        return new InventoryDynamicDatasource(currentDataSources::get);
     }
 
     @Bean(name = ENTITY_MANAGER_FACTORY)

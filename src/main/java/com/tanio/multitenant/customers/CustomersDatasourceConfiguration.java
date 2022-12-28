@@ -27,7 +27,7 @@ class CustomersDatasourceConfiguration {
 
     @Bean
     CustomersDynamicDatasource customersDataSource(CurrentCombinedDatasource currentDataSources) {
-        return new CustomersDynamicDatasource(currentDataSources.get());
+        return new CustomersDynamicDatasource(currentDataSources::get);
     }
 
     @Bean(name = ENTITY_MANAGER_FACTORY)

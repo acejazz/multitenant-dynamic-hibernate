@@ -1,20 +1,21 @@
 package com.tanio.multitenant;
 
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 
+import static org.springframework.web.context.WebApplicationContext.SCOPE_REQUEST;
+
 @Component
+@Scope(scopeName = SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class CurrentCombinedDatasource {
-    ThreadLocal<CombinedDataSource> datasource = new ThreadLocal<>();
+    CombinedDataSource datasource;
 
     void set(CombinedDataSource datasource) {
-        this.datasource.set(datasource);
+        this.datasource = datasource;
     }
 
-    public ThreadLocal<CombinedDataSource> get() {
+    public CombinedDataSource get() {
         return datasource;
-    }
-
-    void reset() {
-        datasource.remove();
     }
 }

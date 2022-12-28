@@ -29,12 +29,9 @@ public class TenantKeySelectorFilter implements Filter {
             throw new RuntimeException("Not possible to determine Tenant");
         }
 
-        currentCombinedDatasource.set(combinedDataSourceService.getForTenantKey(tenantId));
+        CombinedDataSource combinedDataSource = combinedDataSourceService.getForTenantKey(tenantId);
+        currentCombinedDatasource.set(combinedDataSource);
 
-        try {
-            chain.doFilter(request, response);
-        } finally {
-            currentCombinedDatasource.reset();
-        }
+        chain.doFilter(request, response);
     }
 }

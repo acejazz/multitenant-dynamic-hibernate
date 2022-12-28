@@ -4,12 +4,13 @@ import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
 
 import javax.sql.DataSource;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class DynamicDataSource extends AbstractRoutingDataSource {
-    private final ThreadLocal<CombinedDataSource> threadLocalCombinedDataSource;
+    private final Supplier<CombinedDataSource> threadLocalCombinedDataSource;
     private final Function<CombinedDataSource, DataSource> extractDataSource;
 
-    public DynamicDataSource(ThreadLocal<CombinedDataSource> threadLocalCombinedDataSource,
+    public DynamicDataSource(Supplier<CombinedDataSource> threadLocalCombinedDataSource,
                              Function<CombinedDataSource, DataSource> extractDataSource) {
         this.threadLocalCombinedDataSource = threadLocalCombinedDataSource;
         this.extractDataSource = extractDataSource;
