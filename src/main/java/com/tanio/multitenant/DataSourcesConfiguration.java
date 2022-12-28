@@ -9,12 +9,12 @@ import javax.sql.DataSource;
 public class DataSourcesConfiguration {
 
     @Bean(name = "customersDataSource")
-    DataSource customersDataSource(CurrentDataSources currentDataSources) {
-        return new DynamicDatasource(currentDataSources.getCustomersDatasource());
+    DataSource customersDataSource(CurrentCombinedDatasource currentDataSources) {
+        return new CustomersDynamicDatasource(currentDataSources.get());
     }
 
     @Bean(name = "inventoryDatasource")
-    DataSource inventoryDataSource(CurrentDataSources currentDataSources) {
-        return new DynamicDatasource(currentDataSources.getInventoryDatasource());
+    DataSource inventoryDataSource(CurrentCombinedDatasource currentDataSources) {
+        return new InventoryDynamicDatasource(currentDataSources.get());
     }
 }

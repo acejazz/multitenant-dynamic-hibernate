@@ -4,10 +4,10 @@ import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
 
 import javax.sql.DataSource;
 
-public class DynamicDatasource extends AbstractRoutingDataSource {
-    private final ThreadLocal<DataSource> dataSource;
+public class InventoryDynamicDatasource extends AbstractRoutingDataSource {
+    private final ThreadLocal<CombinedDataSource> dataSource;
 
-    public DynamicDatasource(ThreadLocal<DataSource> dataSource) {
+    public InventoryDynamicDatasource(ThreadLocal<CombinedDataSource> dataSource) {
         this.dataSource = dataSource;
     }
 
@@ -18,7 +18,7 @@ public class DynamicDatasource extends AbstractRoutingDataSource {
 
     @Override
     protected DataSource determineTargetDataSource() {
-        return dataSource.get();
+        return dataSource.get().inventoryDatasource;
     }
 
     @Override
