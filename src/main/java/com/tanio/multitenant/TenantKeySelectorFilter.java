@@ -25,13 +25,11 @@ public class TenantKeySelectorFilter implements Filter {
         HttpServletRequest req = (HttpServletRequest) request;
         String tenantId = req.getHeader("X-TenantID");
 
-        if (tenantId.equals("1")) {
-            currentCombinedDatasource.set(combinedDataSourceService.getForTenantKey("1"));
-        } else if (tenantId.equals("2")) {
-            currentCombinedDatasource.set(combinedDataSourceService.getForTenantKey("2"));
-        } else {
+        if (!combinedDataSourceService.validKeys().contains(tenantId)) {
             throw new RuntimeException("Not possible to determine Tenant");
         }
+
+        currentCombinedDatasource.set(combinedDataSourceService.getForTenantKey(tenantId));
 
         try {
             chain.doFilter(request, response);
