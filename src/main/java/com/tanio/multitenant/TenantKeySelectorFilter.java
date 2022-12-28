@@ -13,7 +13,13 @@ import java.io.IOException;
 public class TenantKeySelectorFilter implements Filter {
 
     @Autowired
-    private CurrentTenantKey currentTenantKey;
+    private CurrentDataSources currentDataSources;
+
+    @Autowired
+    private CustomerDataSourcesProvider customerDataSourcesProvider;
+
+    @Autowired
+    private InventoryDataSourcesProvider inventoryDataSourcesProvider;
 
     @Override
     public void doFilter(ServletRequest request,
@@ -23,9 +29,13 @@ public class TenantKeySelectorFilter implements Filter {
         String tenantId = req.getHeader("X-TenantID");
 
         if (tenantId.equals("1")) {
-            currentTenantKey.set("1");
+            currentDataSources.set(
+                    customerDataSourcesProvider.getForTenantKey("1"),
+                    inventoryDataSourcesProvider.getForTenantKey("1"));
         } else if (tenantId.equals("2")) {
-            currentTenantKey.set("2");
+            currentDataSources.set(
+                    customerDataSourcesProvider.getForTenantKey("2"),
+                    inventoryDataSourcesProvider.getForTenantKey("2"));
         } else {
             throw new RuntimeException("Not possible to determine Tenant");
         }
@@ -33,7 +43,7 @@ public class TenantKeySelectorFilter implements Filter {
         try {
             chain.doFilter(request, response);
         } finally {
-            currentTenantKey.reset();
+            currentDataSources.reset();
         }
     }
 }

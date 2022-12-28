@@ -5,12 +5,10 @@ import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
 import javax.sql.DataSource;
 
 public class DynamicDatasource extends AbstractRoutingDataSource {
-    private final CurrentTenantKey currentTenantKey;
-    private final DataSourceProvider dataSourceProvider;
+    private final ThreadLocal<DataSource> dataSource;
 
-    public DynamicDatasource(CurrentTenantKey currentTenantKey, DataSourceProvider dataSourceProvider) {
-        this.currentTenantKey = currentTenantKey;
-        this.dataSourceProvider = dataSourceProvider;
+    public DynamicDatasource(ThreadLocal<DataSource> dataSource) {
+        this.dataSource = dataSource;
     }
 
     @Override
@@ -20,7 +18,7 @@ public class DynamicDatasource extends AbstractRoutingDataSource {
 
     @Override
     protected DataSource determineTargetDataSource() {
-        return dataSourceProvider.getForTenantKey(currentTenantKey.get());
+        return dataSource.get();
     }
 
     @Override
