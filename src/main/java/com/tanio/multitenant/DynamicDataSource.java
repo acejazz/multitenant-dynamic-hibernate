@@ -6,11 +6,12 @@ import javax.sql.DataSource;
 import java.util.function.Function;
 
 public class DynamicDataSource extends AbstractRoutingDataSource {
-    private final ThreadLocal<CombinedDataSource> dataSource;
+    private final ThreadLocal<CombinedDataSource> threadLocalCombinedDataSource;
     private final Function<CombinedDataSource, DataSource> extractDataSource;
 
-    public DynamicDataSource(ThreadLocal<CombinedDataSource> dataSource, Function<CombinedDataSource, DataSource> extractDataSource) {
-        this.dataSource = dataSource;
+    public DynamicDataSource(ThreadLocal<CombinedDataSource> threadLocalCombinedDataSource,
+                             Function<CombinedDataSource, DataSource> extractDataSource) {
+        this.threadLocalCombinedDataSource = threadLocalCombinedDataSource;
         this.extractDataSource = extractDataSource;
     }
 
@@ -21,7 +22,8 @@ public class DynamicDataSource extends AbstractRoutingDataSource {
 
     @Override
     public DataSource determineTargetDataSource() {
-        return extractDataSource.apply(dataSource.get());
+        CombinedDataSource combinedDataSource = threadLocalCombinedDataSource.get();
+        return extractDataSource.apply(combinedDataSource);
     }
 
     @Override

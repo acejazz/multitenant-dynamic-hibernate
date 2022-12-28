@@ -11,8 +11,6 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import javax.sql.DataSource;
-
 import static com.tanio.multitenant.customers.CustomersDatasourceConfiguration.ENTITY_MANAGER_FACTORY;
 import static com.tanio.multitenant.customers.CustomersDatasourceConfiguration.TRANSACTION_MANAGER;
 import static java.util.Collections.singletonMap;
@@ -26,16 +24,14 @@ import static java.util.Objects.requireNonNull;
 class CustomersDatasourceConfiguration {
     static final String ENTITY_MANAGER_FACTORY = "customersLocalContainerEntityManagerFactoryBean";
     static final String TRANSACTION_MANAGER = "customersPlatformTransactionManager";
-    static final String CUSTOMERS_DATA_SOURCE = "customersDataSource";
 
-    @Bean(name = CUSTOMERS_DATA_SOURCE)
-    DataSource customersDataSource(CurrentCombinedDatasource currentDataSources) {
+    @Bean
+    CustomersDynamicDatasource customersDataSource(CurrentCombinedDatasource currentDataSources) {
         return new CustomersDynamicDatasource(currentDataSources.get());
     }
 
     @Bean(name = ENTITY_MANAGER_FACTORY)
-    LocalContainerEntityManagerFactoryBean entityManagerFactory(
-            @Qualifier(CUSTOMERS_DATA_SOURCE) DataSource dataSource) {
+    LocalContainerEntityManagerFactoryBean entityManagerFactory(CustomersDynamicDatasource dataSource) {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(dataSource);
         em.setJpaPropertyMap(singletonMap("hibernate.dialect", "org.hibernate.dialect.MySQL5Dialect"));
