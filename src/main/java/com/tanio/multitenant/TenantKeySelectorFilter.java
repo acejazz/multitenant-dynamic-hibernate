@@ -13,7 +13,10 @@ import java.io.IOException;
 public class TenantKeySelectorFilter implements Filter {
 
     @Autowired
-    private CurrentTenantKey currentTenantKey;
+    private CurrentCombinedDataSource currentCombinedDatasource;
+
+    @Autowired
+    private CombinedDataSourceService combinedDataSourceService;
 
     @Override
     public void doFilter(ServletRequest request,
@@ -22,18 +25,13 @@ public class TenantKeySelectorFilter implements Filter {
         HttpServletRequest req = (HttpServletRequest) request;
         String tenantId = req.getHeader("X-TenantID");
 
-        if (tenantId.equals("1")) {
-            currentTenantKey.set("1");
-        } else if (tenantId.equals("2")) {
-            currentTenantKey.set("2");
-        } else {
+        if (!combinedDataSourceService.validKeys().contains(tenantId)) {
             throw new RuntimeException("Not possible to determine Tenant");
         }
 
-        try {
-            chain.doFilter(request, response);
-        } finally {
-            currentTenantKey.reset();
-        }
+        CombinedDataSource combinedDataSource = combinedDataSourceService.getForTenantKey(tenantId);
+        currentCombinedDatasource.set(combinedDataSource);
+
+        chain.doFilter(request, response);
     }
 }

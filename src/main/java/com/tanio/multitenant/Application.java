@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.sql.DataSource;
 import java.util.UUID;
 
-@SpringBootApplication
+@SpringBootApplication(exclude = DataSourceAutoConfiguration.class)
 @RestController
 public class Application implements CommandLineRunner {
 
@@ -26,10 +27,7 @@ public class Application implements CommandLineRunner {
     CarRepository carRepository;
 
     @Autowired
-    CustomerDataSourcesProvider customersDataSourcesProvider;
-
-	@Autowired
-	InventoryDataSourcesProvider inventoryDataSourcesProvider;
+    CombinedDataSourceService combinedDataSourceService;
 
     int counter = 0;
 
@@ -49,38 +47,38 @@ public class Application implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-		DataSource firstCustomerDataSource = DataSourceBuilder.create()
-				.driverClassName("com.mysql.cj.jdbc.Driver")
-				.url("jdbc:mysql://localhost:3306/customers")
-				.username("root")
-				.password("tanio")
-				.build();
+        DataSource firstCustomerDataSource = DataSourceBuilder.create()
+                .driverClassName("com.mysql.cj.jdbc.Driver")
+                .url("jdbc:mysql://localhost:3306/customers")
+                .username("root")
+                .password("tanio")
+                .build();
 
-		DataSource firstInventoryDataSource = DataSourceBuilder.create()
-				.driverClassName("com.mysql.cj.jdbc.Driver")
-				.url("jdbc:mysql://localhost:3307/inventory")
-				.username("root")
-				.password("tanio")
-				.build();
+        DataSource firstInventoryDataSource = DataSourceBuilder.create()
+                .driverClassName("com.mysql.cj.jdbc.Driver")
+                .url("jdbc:mysql://localhost:3307/inventory")
+                .username("root")
+                .password("tanio")
+                .build();
 
-		customersDataSourcesProvider.addDataSource(firstCustomerDataSource, "1");
-		inventoryDataSourcesProvider.addDataSource(firstInventoryDataSource, "1");
+        CombinedDataSource first = new CombinedDataSource(firstCustomerDataSource, firstInventoryDataSource);
+        combinedDataSourceService.addCombinedDataSource(first, "1");
 
-		DataSource secondCustomerDataSource = DataSourceBuilder.create()
-				.driverClassName("com.mysql.cj.jdbc.Driver")
-				.url("jdbc:mysql://localhost:3308/customers")
-				.username("root")
-				.password("tanio")
-				.build();
+        DataSource secondCustomerDataSource = DataSourceBuilder.create()
+                .driverClassName("com.mysql.cj.jdbc.Driver")
+                .url("jdbc:mysql://localhost:3308/customers")
+                .username("root")
+                .password("tanio")
+                .build();
 
-		DataSource secondInventoryDataSource = DataSourceBuilder.create()
-				.driverClassName("com.mysql.cj.jdbc.Driver")
-				.url("jdbc:mysql://localhost:3309/inventory")
-				.username("root")
-				.password("tanio")
-				.build();
+        DataSource secondInventoryDataSource = DataSourceBuilder.create()
+                .driverClassName("com.mysql.cj.jdbc.Driver")
+                .url("jdbc:mysql://localhost:3309/inventory")
+                .username("root")
+                .password("tanio")
+                .build();
 
-		customersDataSourcesProvider.addDataSource(secondCustomerDataSource, "2");
-		inventoryDataSourcesProvider.addDataSource(secondInventoryDataSource, "2");
+        CombinedDataSource second = new CombinedDataSource(secondCustomerDataSource, secondInventoryDataSource);
+        combinedDataSourceService.addCombinedDataSource(second, "2");
     }
 }
