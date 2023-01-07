@@ -13,7 +13,7 @@ import java.io.IOException;
 public class TenantKeySelectorFilter implements Filter {
 
     @Autowired
-    private CurrentCombinedDatasource currentCombinedDatasource;
+    private CurrentCombinedDataSource currentCombinedDatasource;
 
     @Autowired
     private CombinedDataSourceService combinedDataSourceService;

@@ -1,6 +1,6 @@
 package com.tanio.multitenant.inventory;
 
-import com.tanio.multitenant.CurrentCombinedDatasource;
+import com.tanio.multitenant.CurrentCombinedDataSource;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,7 +26,7 @@ class InventoryDatasourceConfiguration {
     final static String TRANSACTION_MANAGER = "inventoryPlatformTransactionManager";
 
     @Bean
-    InventoryDynamicDatasource inventoryDataSource(CurrentCombinedDatasource currentDataSources) {
+    InventoryDynamicDatasource inventoryDataSource(CurrentCombinedDataSource currentDataSources) {
         return new InventoryDynamicDatasource(currentDataSources::get);
     }
 

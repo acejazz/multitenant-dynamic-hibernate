@@ -6,14 +6,14 @@ import javax.sql.DataSource;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class DynamicDataSource extends AbstractRoutingDataSource {
-    private final Supplier<CombinedDataSource> threadLocalCombinedDataSource;
-    private final Function<CombinedDataSource, DataSource> extractDataSource;
+public abstract class DynamicDataSource extends AbstractRoutingDataSource {
+    private final Supplier<CombinedDataSource> extractCombinedDataSourceFromRequest;
+    private final Function<CombinedDataSource, DataSource> extractDataSourceFromCombined;
 
-    public DynamicDataSource(Supplier<CombinedDataSource> threadLocalCombinedDataSource,
-                             Function<CombinedDataSource, DataSource> extractDataSource) {
-        this.threadLocalCombinedDataSource = threadLocalCombinedDataSource;
-        this.extractDataSource = extractDataSource;
+    public DynamicDataSource(Supplier<CombinedDataSource> extractCombinedDataSourceFromRequest,
+                             Function<CombinedDataSource, DataSource> extractDataSourceFromCombined) {
+        this.extractCombinedDataSourceFromRequest = extractCombinedDataSourceFromRequest;
+        this.extractDataSourceFromCombined = extractDataSourceFromCombined;
     }
 
     @Override
@@ -23,8 +23,11 @@ public class DynamicDataSource extends AbstractRoutingDataSource {
 
     @Override
     public DataSource determineTargetDataSource() {
-        CombinedDataSource combinedDataSource = threadLocalCombinedDataSource.get();
-        return extractDataSource.apply(combinedDataSource);
+        // Extract current combined data-source (both inventory and customers) from the request
+        CombinedDataSource combinedDataSource = extractCombinedDataSourceFromRequest.get();
+
+        // Extract the single data-source from the combined
+        return extractDataSourceFromCombined.apply(combinedDataSource);
     }
 
     @Override

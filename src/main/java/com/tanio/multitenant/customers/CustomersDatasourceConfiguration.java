@@ -1,6 +1,6 @@
 package com.tanio.multitenant.customers;
 
-import com.tanio.multitenant.CurrentCombinedDatasource;
+import com.tanio.multitenant.CurrentCombinedDataSource;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,12 +26,12 @@ class CustomersDatasourceConfiguration {
     static final String TRANSACTION_MANAGER = "customersPlatformTransactionManager";
 
     @Bean
-    CustomersDynamicDatasource customersDataSource(CurrentCombinedDatasource currentDataSources) {
-        return new CustomersDynamicDatasource(currentDataSources::get);
+    CustomersDynamicDataSource customersDataSource(CurrentCombinedDataSource currentDataSources) {
+        return new CustomersDynamicDataSource(currentDataSources::get);
     }
 
     @Bean(name = ENTITY_MANAGER_FACTORY)
-    LocalContainerEntityManagerFactoryBean entityManagerFactory(CustomersDynamicDatasource dataSource) {
+    LocalContainerEntityManagerFactoryBean entityManagerFactory(CustomersDynamicDataSource dataSource) {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(dataSource);
         em.setJpaPropertyMap(singletonMap("hibernate.dialect", "org.hibernate.dialect.MySQL5Dialect"));

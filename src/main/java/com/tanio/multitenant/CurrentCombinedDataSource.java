@@ -8,7 +8,7 @@ import static org.springframework.web.context.WebApplicationContext.SCOPE_REQUES
 
 @Component
 @Scope(scopeName = SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
-public class CurrentCombinedDatasource {
+public class CurrentCombinedDataSource {
     CombinedDataSource datasource;
 
     void set(CombinedDataSource datasource) {

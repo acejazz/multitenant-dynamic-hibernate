@@ -5,8 +5,8 @@ import com.tanio.multitenant.DynamicDataSource;
 
 import java.util.function.Supplier;
 
-public class CustomersDynamicDatasource extends DynamicDataSource {
-    public CustomersDynamicDatasource(Supplier<CombinedDataSource> dataSource) {
+public class CustomersDynamicDataSource extends DynamicDataSource {
+    public CustomersDynamicDataSource(Supplier<CombinedDataSource> dataSource) {
         super(dataSource, CombinedDataSource::customersDatasource);
     }
 }
